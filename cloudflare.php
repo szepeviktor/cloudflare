@@ -52,7 +52,7 @@ function cloudflare_init() {
             break;
         }
     }
-	add_action('admin_menu', 'cloudflare_config_page');
+	Add_action('admin_menu', 'cloudflare_config_page');
 	cloudflare_admin_warnings();
 }
 add_action('init', 'cloudflare_init');
@@ -121,6 +121,7 @@ function cloudflare_conf() {
                           'new_email_valid' => array('color' => '2d2', 'text' => __('Your email has been verified. Happy blogging!')),
                           );
     } else if ( isset($_POST['submit']) && isset($_POST['optimize']) ) {
+        update_option('cloudflare_api_db_last_run', time());
         if(current_user_can('manage_database')) {
             remove_action('admin_notices', 'cloudflare_warning');
             $tables = $wpdb->get_col("SHOW TABLES");
@@ -132,7 +133,6 @@ function cloudflare_conf() {
                 }
             }
             if (count($db_results) == 0) {
-                update_option('cloudflare_api_db_last_run', time());
                 $db_results[] = "All tables optimized without error.";
             }
         }
