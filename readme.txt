@@ -2,7 +2,7 @@
 Contributors: i3149
 Tags: cloudflare, comments, spam, cdn, free, website, performance, speed
 Requires at least: 2.8
-Tested up to: 3.0.4
+Tested up to: 3.1
 Stable tag: 1.1.3
 License: GPLv2
 
@@ -45,6 +45,7 @@ You will also want to sign up your blog with CloudFlare.com
 = 1.1.3 =
 
 * Better permission checking for DB optimizer.
+* Added CloudFlare's latest /20 to the list of CloudFlare IP ranges.
 
 = 1.1.2 =
 
