@@ -134,7 +134,7 @@ function cloudflare_conf() {
                 && check_admin_referer('cloudflare-db-opt','cloudflare-db-opt-nonce')) {
 
         update_option('cloudflare_api_db_last_run', time());
-        if(current_user_can('edit_files')) {
+        if(current_user_can('administrator')) {
             remove_action('admin_notices', 'cloudflare_warning');
             $tables = $wpdb->get_col("SHOW TABLES");
             foreach($tables as $table_name) {
