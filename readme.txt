@@ -10,11 +10,11 @@ The CloudFlare WordPress Plugin ensures your WordPress blog is running optimally
 
 == Description ==
 
-Try out our brand new Beta version, 1.2.5.Beta!
+Try out our brand new Beta version, 1.2.6.Beta!
 Included in this version:
 1) IPv6 support.
 2) Added Development Mode option to CloudFlare WordPress plugin settings page.
-<a href="http://downloads.wordpress.org/plugin/cloudflare.1.2.5.Beta.zip" title="Download CloudFlare 1.2.5.Beta WordPress Plugin">Download the 1.2.5.Beta version here!</a>
+<a href="http://downloads.wordpress.org/plugin/cloudflare.1.2.6.Beta.zip" title="Download CloudFlare 1.2.6.Beta WordPress Plugin">Download the 1.2.6.Beta version here!</a>
 
 CloudFlare has developed a plugin for WordPress. By using the CloudFlare WordPress Plugin, you receive: 
 
