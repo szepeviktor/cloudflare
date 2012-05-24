@@ -48,9 +48,8 @@ You will also want to sign up your blog with CloudFlare.com
 
 == Changelog ==
 
-
-= 1.3.1 =  
-* Version number update, resolve issues with a previous buggy 1.3.0 version.
+= 1.3.2.Beta =  
+* BETA RELEASE: IPv6 support - Pull the IPv6 range from https://www.cloudflare.com/ips-v6.  Added Development Mode option to wordpress plugin settings page.
 
 = 1.2.4 =  
 * Pull the IP range from https://www.cloudflare.com/ips-v4.  Modified to keep all files within cloudflare plugin directory.
