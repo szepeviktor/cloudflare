@@ -10,6 +10,12 @@ The CloudFlare WordPress Plugin ensures your WordPress blog is running optimally
 
 == Description ==
 
+Try out our brand new Beta version, 1.3.2.Beta!
+Included in this version:
+1) IPv6 support.
+2) Added Development Mode option to CloudFlare WordPress plugin settings page.
+<a href="http://downloads.wordpress.org/plugin/cloudflare.1.3.2.Beta.zip" title="Download CloudFlare 1.3.2.Beta WordPress Plugin">Download the 1.3.2.Beta version here!</a>
+
 CloudFlare has developed a plugin for WordPress. By using the CloudFlare WordPress Plugin, you receive: 
 
 * Correct IP Address information for comments posted to your site
@@ -44,7 +50,7 @@ You will also want to sign up your blog with CloudFlare.com
 
 
 = 1.3.1 =  
-* Version number update, resolve issues buggy 1.3 version.
+* Version number update, resolve issues with a previous buggy 1.3.0 version.
 
 = 1.2.4 =  
 * Pull the IP range from https://www.cloudflare.com/ips-v4.  Modified to keep all files within cloudflare plugin directory.
