@@ -3,18 +3,12 @@ Contributors: i3149, jchen329, jamescf
 Tags: cloudflare, comments, spam, cdn, free, website, performance, speed
 Requires at least: 2.8
 Tested up to: 3.3
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2
 
 The CloudFlare WordPress Plugin ensures your WordPress blog is running optimally on the CloudFlare platform.
 
 == Description ==
-
-Try out our brand new Beta version, 1.3.2.Beta!
-Included in this version:
-1) IPv6 support.
-2) Added Development Mode option to CloudFlare WordPress plugin settings page.
-<a href="http://downloads.wordpress.org/plugin/cloudflare.1.3.2.Beta.zip" title="Download CloudFlare 1.3.2.Beta WordPress Plugin">Download the 1.3.2.Beta version here!</a>
 
 CloudFlare has developed a plugin for WordPress. By using the CloudFlare WordPress Plugin, you receive: 
 
@@ -47,8 +41,10 @@ You will also want to sign up your blog with CloudFlare.com
 [Read more](http://blog.cloudflare.com/introducing-the-cloudflare-wordpress-plugin) on why we created this plugin.
 
 == Changelog ==
+= 1.3.4 =
+* Add in IPV6 support and Development Mode option to wordpress plugin settings page.  Remove cached IP range text file.
 
-= 1.3.3 =  
+= 1.3.3 =
 * Bump stable version number.
 
 = 1.3.2.Beta =  
