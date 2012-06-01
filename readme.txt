@@ -3,7 +3,7 @@ Contributors: i3149, jchen329, jamescf
 Tags: cloudflare, comments, spam, cdn, free, website, performance, speed
 Requires at least: 2.8
 Tested up to: 3.3
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2
 
 The CloudFlare WordPress Plugin ensures your WordPress blog is running optimally on the CloudFlare platform.
@@ -41,6 +41,9 @@ You will also want to sign up your blog with CloudFlare.com
 [Read more](http://blog.cloudflare.com/introducing-the-cloudflare-wordpress-plugin) on why we created this plugin.
 
 == Changelog ==
+= 1.3.5 =
+* Disable Development Mode option if cURL not installed.  Will Use JSONP in future release to allow domains without cURL to use Development Mode.
+
 = 1.3.4 =
 * Add in IPV6 support and Development Mode option to wordpress plugin settings page.  Remove cached IP range text file.
 
