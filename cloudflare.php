@@ -3,7 +3,7 @@
 Plugin Name: CloudFlare
 Plugin URI: http://www.cloudflare.com/wiki/CloudFlareWordPressPlugin
 Description: CloudFlare integrates your blog with the CloudFlare platform.
-Version: 1.3.4
+Version: 1.3.5
 Author: Ian Pye, Jerome Chen, James Greene (CloudFlare Team)
 License: GPLv2
 */
@@ -26,7 +26,7 @@ Plugin adapted from the Akismet WP plugin.
 
 */	
 
-define('CLOUDFLARE_VERSION', '1.3.4');
+define('CLOUDFLARE_VERSION', '1.3.5');
 require_once("ip_in_range.php");
 
 // Make sure we don't expose any info if called directly
@@ -109,12 +109,18 @@ function cloudflare_conf() {
     $urlparts = parse_url(site_url());
     $raw_domain = $urlparts["host"];
 
-    // Attempt to get the matching host from CF
-    $domain = get_domain($cloudflare_api_key, $cloudflare_api_email, $raw_domain);
+    $curl_installed = function_exists('curl_init');
 
-    // If not found, default to pulling the domain via client side.
-    if (!$domain) {
-         $domain = $raw_domain;
+    if ($curl_installed) {
+        // Attempt to get the matching host from CF
+        $domain = get_domain($cloudflare_api_key, $cloudflare_api_email, $raw_domain);
+        // If not found, default to pulling the domain via client side.
+        if (!$domain) {
+             $domain = $raw_domain;
+        }
+    }
+    else {
+         $domain = $raw_domain;    
     }
     
     define ("THIS_DOMAIN",  $domain);
@@ -153,24 +159,28 @@ function cloudflare_conf() {
             update_option('cloudflare_api_email_set_once', "TRUE");
         }
 
-        if ($key != "" && $email != "") {
-            set_dev_mode(esc_sql($key), esc_sql($email), THIS_DOMAIN, $dev_mode);
-            if ($dev_mode) {
-                $ms[] = 'dev_mode_on';
-            }
-            else {
-                $ms[] = 'dev_mode_off';
-            }
-        }
 
         $messages = array(
                           'new_key_empty' => array('color' => 'aa0', 'text' => __('Your key has been cleared.')),
                           'new_key_valid' => array('color' => '2d2', 'text' => __('Your key has been verified. Happy blogging!')),
                           'new_email_empty' => array('color' => 'aa0', 'text' => __('Your email has been cleared.')),
-                          'new_email_valid' => array('color' => '2d2', 'text' => __('Your email has been verified. Happy blogging!')),
-                          'dev_mode_on' => array('color' => '2d2', 'text' => __('Development mode is On. Happy blogging!')),
-                          'dev_mode_off' => array('color' => 'aa0', 'text' => __('Development mode is Off. Happy blogging!'))
+                          'new_email_valid' => array('color' => '2d2', 'text' => __('Your email has been verified. Happy blogging!'))
                           );
+
+        if ($curl_installed) {
+            if ($key != "" && $email != "") {
+                set_dev_mode(esc_sql($key), esc_sql($email), THIS_DOMAIN, $dev_mode);
+                if ($dev_mode) {
+                    $ms[] = 'dev_mode_on';
+                }
+                else {
+                    $ms[] = 'dev_mode_off';
+                }
+            }
+        
+            $messages['dev_mode_on'] = array('color' => '2d2', 'text' => __('Development mode is On. Happy blogging!'));
+            $messages['dev_mode_off'] = array('color' => 'aa0', 'text' => __('Development mode is Off. Happy blogging!'));
+        }
     } else if ( isset($_POST['submit']) 
                 && isset($_POST['optimize'])
                 && check_admin_referer('cloudflare-db-opt','cloudflare-db-opt-nonce')) {
@@ -212,10 +222,6 @@ function cloudflare_conf() {
     <h4><?php _e('CLOUDFLARE WORDPRESS PLUGIN:'); ?></h4>
         <?php //    <div class="narrow"> ?>
 
-<u>**IMPORTANT NOTE: THIS IS A BETA VERSION OF THE CLOUDFLARE PLUGIN**</u><br/><br/>
-
-<u>If you experience any major issues related to this plugin version, please revert back to the previous stable version (1.2.4).</u><br/><br/>
-
 CloudFlare has developed a plugin for WordPress. By using the CloudFlare WordPress Plugin, you receive: 
 <ol>
 <li>Correct IP Address information for comments posted to your site</li>
@@ -247,8 +253,9 @@ The plugin is compatible with WordPress version 2.8.6 and later. The plugin will
 CloudFlare is a service that makes websites load faster and protects sites from online spammers and hackers. Any website with a root domain (ie www.mydomain.com) can use CloudFlare. On average, it takes less than 5 minutes to sign up. You can learn more here: <a href="http://www.cloudflare.com/">CloudFlare.com</a>.
 
     <?php 
-// if ($is_cf) {
-        $dev_mode = get_dev_mode_status($cloudflare_api_key, $cloudflare_api_email, THIS_DOMAIN);
+        if ($curl_installed) {
+            $dev_mode = get_dev_mode_status($cloudflare_api_key, $cloudflare_api_email, THIS_DOMAIN);
+        }
     ?>
 
     <hr />
@@ -267,18 +274,19 @@ CloudFlare is a service that makes websites load faster and protects sites from 
     <h3><label for="email"><?php _e('CloudFlare API Email'); ?></label></h3>
     <p><input id="email" name="email" type="text" size="50" maxlength="48" value="<?php echo get_option('cloudflare_api_email'); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;" /> (<?php _e('<a href="https://www.cloudflare.com/my-account.html">Get this?</a>'); ?>)
     <h3><label for="dev_mode"><?php _e('Development Mode'); ?></label> <span style="font-size:9pt;">(<a href="http://support.cloudflare.com/kb/what-do-the-various-cloudflare-settings-do/what-does-cloudflare-development-mode-mean" " target="_blank">What is this?</a>)</span></h3>
-   <div style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;">
-   <input type="radio" name="dev_mode" value="0" <? if ($dev_mode == "off") echo "checked"; ?>> Off
-   <input type="radio" name="dev_mode" value="1" <? if ($dev_mode == "on") echo "checked"; ?>> On
-  </div>
-    </p>
 
+    <? if ($curl_installed) { ?>
+    <div style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;">
+    <input type="radio" name="dev_mode" value="0" <? if ($dev_mode == "off") echo "checked"; ?>> Off
+    <input type="radio" name="dev_mode" value="1" <? if ($dev_mode == "on") echo "checked"; ?>> On
+    </div>
+    <? } else { ?>
+    You cannot toggle development mode because cURL is not installed for your domain.  Please contact a server administrator for assistance with installing cURL.
+    <? } ?>
+    
+    </p>
     <p class="submit"><input type="submit" name="submit" value="<?php _e('Update options &raquo;'); ?>" /></p>
     </form>
-    
-    <?php 
-    // } 
-    ?>
 
     <form action="" method="post" id="cloudflare-db">
     <?php wp_nonce_field('cloudflare-db-opt','cloudflare-db-opt-nonce'); ?>
