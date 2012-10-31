@@ -3,7 +3,7 @@
 Plugin Name: CloudFlare
 Plugin URI: http://www.cloudflare.com/wiki/CloudFlareWordPressPlugin
 Description: CloudFlare integrates your blog with the CloudFlare platform.
-Version: 1.3.5
+Version: 1.3.6
 Author: Ian Pye, Jerome Chen, James Greene (CloudFlare Team)
 License: GPLv2
 */
@@ -26,7 +26,7 @@ Plugin adapted from the Akismet WP plugin.
 
 */	
 
-define('CLOUDFLARE_VERSION', '1.3.5');
+define('CLOUDFLARE_VERSION', '1.3.6');
 require_once("ip_in_range.php");
 
 // Make sure we don't expose any info if called directly
@@ -128,7 +128,6 @@ function cloudflare_conf() {
     $db_results = array();
                
 	if ( isset($_POST['submit']) 
-         && !($_POST['optimize']) 
          && check_admin_referer('cloudflare-db-api','cloudflare-db-api-nonce') ) {
         
 		if ( function_exists('current_user_can') && !current_user_can('manage_options') ) {
@@ -181,38 +180,11 @@ function cloudflare_conf() {
             $messages['dev_mode_on'] = array('color' => '2d2', 'text' => __('Development mode is On. Happy blogging!'));
             $messages['dev_mode_off'] = array('color' => 'aa0', 'text' => __('Development mode is Off. Happy blogging!'));
         }
-    } else if ( isset($_POST['submit']) 
-                && isset($_POST['optimize'])
-                && check_admin_referer('cloudflare-db-opt','cloudflare-db-opt-nonce')) {
-
-        update_option('cloudflare_api_db_last_run', time());
-        if(current_user_can('administrator')) {
-            remove_action('admin_notices', 'cloudflare_warning');
-            $tables = $wpdb->get_col("SHOW TABLES");
-            foreach($tables as $table_name) {
-                $optimize = $wpdb->query("OPTIMIZE TABLE `$table_name`");
-                $analyze = $wpdb->query("ANALYZE TABLE `$table_name`");
-                if (!$optimize || !$analyze) {
-                    $db_results[] = "Error optimizing $table_name";
-                }
-            }
-            if (count($db_results) == 0) {
-                $db_results[] = "All tables optimized without error.";
-            }
-        } else {
-            $db_results[] = "The current user does not have the permission \"manage_database\". Please run the command again with an appropriate user.";
-        }
     }
-
     ?>
-    <?php if ( !empty($_POST['submit'] ) && !($_POST['optimize']) ) { ?>
+    <?php if ( !empty($_POST['submit'] )) { ?>
     <div id="message" class="updated fade"><p><strong><?php _e('Options saved.') ?></strong></p></div>
-    <?php } else if ( isset($_POST['submit']) && isset($_POST['optimize']) ) {
-    foreach ($db_results as $res) {
-        ?><div id="message" class="updated fade"><p><strong><?php _e($res) ?></strong></p></div><?php
-    }
-} 
-    ?>
+    <?php } ?>
     <div class="wrap">
 
     <?php if ($is_cf) { ?>
@@ -238,8 +210,6 @@ The plugin is compatible with WordPress version 2.8.6 and later. The plugin will
 <ol>
 <li>The main purpose of this plugin is to ensure you have no change to your originating IPs when using CloudFlare. Since CloudFlare acts a reverse proxy, connecting IPs now come from CloudFlare's range. This plugin will ensure you can continue to see the originating IP. Once you install the plugin, the IP benefit will be activated.</li>
  
-<li>This plugin can also help to ensure your server database is running optimally. If you are going to run the Database Optimizer associated with this plugin, then run it at a low traffic time. While the Database Optimizer is running, your site will go into Read Only mode, which means that you or your visitors will not be allowed to post. The optimizer should run quickly. Once the optimizer is done running, you will be able to post to your site again. To run the Database Optimizer, click the icon below.</li>
-
 <li>Every time you click the 'spam' button on your blog, this threat information is sent to CloudFlare to ensure you are constantly getting the best site protection.</li>
 
 <li>We recommend that any user on CloudFlare with WordPress use this plugin. </li>
@@ -288,15 +258,6 @@ CloudFlare is a service that makes websites load faster and protects sites from 
     <p class="submit"><input type="submit" name="submit" value="<?php _e('Update options &raquo;'); ?>" /></p>
     </form>
 
-    <form action="" method="post" id="cloudflare-db">
-    <?php wp_nonce_field('cloudflare-db-opt','cloudflare-db-opt-nonce'); ?>
-    <input type="hidden" name="optimize" value="1" />
-
-    <h4><label for="optimize_db"><?php _e('DATABASE OPTIMIZER (optional): Make your site run even faster.'); ?></label>
-    <input type="submit" name="submit" value="<?php _e('Run the optimizer'); ?>" /> (<?php _e('<a href="http://www.cloudflare.com/wiki/WordPressDBOptimizer">What is this?</a>'); ?>)</h4>
-
-    </form>
-
         <?php //    </div> ?>
     </div>
     <?php
@@ -305,42 +266,7 @@ CloudFlare is a service that makes websites load faster and protects sites from 
 function cloudflare_admin_warnings() {
     
     global $cloudflare_api_key, $cloudflare_api_email; 
-    load_cloudflare_keys();
-
-    /**
-	if ( !get_option('cloudflare_api_key_set_once') && !$cloudflare_api_key && !isset($_POST['submit']) ) {
-		function cloudflare_warning() {
-			echo "
-			<div id='cloudflare-warning' class='updated fade'><p><strong>".__('CloudFlare is almost ready.')."</strong> ".sprintf(__('You must <a href="%1$s">enter your CloudFlare API key</a> for it to work.'), "plugins.php?page=cloudflare")."</p></div>
-			";
-		}
-		add_action('admin_notices', 'cloudflare_warning');
-		return;
-	} else if ( !get_option('cloudflare_api_key_set_once') && !$cloudflare_api_email && !isset($_POST['submit']) ) {
-		function cloudflare_warning() {
-			echo "
-			<div id='cloudflare-warning' class='updated fade'><p><strong>".__('CloudFlare is almost ready.')."</strong> ".sprintf(__('You must <a href="%1$s">enter your CloudFlare API email</a> for it to work.'), "plugins.php?page=cloudflare")."</p></div>
-			";
-		}
-		add_action('admin_notices', 'cloudflare_warning');
-		return;
-	} 
-    */
-    
-    // Check to see if they should optimized their DB
-    $last_run_time = (int)get_option('cloudflare_api_db_last_run');
-    if (!$last_run_time) {
-        $last_run_time = time();
-    }
-    if (time() - $last_run_time > 5259487) { // 2 Months (avg)
-        function cloudflare_warning() {
-			echo "
-			<div id='cloudflare-warning' class='updated fade'><p><strong>".__('Your Database is due to be optimized again.')."</strong> ".sprintf(__('We recommend that you <a href="%1$s">run the CloudFlare optimizer</a> every two months to keep your blog running quickly. It\'s time to run it again.'), "plugins.php?page=cloudflare")."</p></div>
-			";
-		}
-		add_action('admin_notices', 'cloudflare_warning');
-		return;
-    }
+    load_cloudflare_keys();    
 }
 
 // Now actually allow CF to see when a comment is approved/not-approved.
