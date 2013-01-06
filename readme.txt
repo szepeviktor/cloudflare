@@ -2,7 +2,7 @@
 Contributors: i3149, jchen329, jamescf
 Tags: cloudflare, comments, spam, cdn, free, website, performance, speed
 Requires at least: 2.8
-Tested up to: 3.3
+Tested up to: 3.5
 Stable tag: 1.3.6
 License: GPLv2
 
