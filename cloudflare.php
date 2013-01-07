@@ -26,7 +26,7 @@ Plugin adapted from the Akismet WP plugin.
 
 */	
 
-define('CLOUDFLARE_VERSION', '1.3.8');
+define('CLOUDFLARE_VERSION', '1.3.9');
 require_once("ip_in_range.php");
 
 // Make sure we don't expose any info if called directly
