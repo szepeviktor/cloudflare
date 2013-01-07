@@ -3,7 +3,7 @@
 Plugin Name: CloudFlare
 Plugin URI: http://www.cloudflare.com/wiki/CloudFlareWordPressPlugin
 Description: CloudFlare integrates your blog with the CloudFlare platform.
-Version: 1.3.8
+Version: 1.3.9
 Author: Ian Pye, Jerome Chen, James Greene (CloudFlare Team)
 License: GPLv2
 */
@@ -26,7 +26,7 @@ Plugin adapted from the Akismet WP plugin.
 
 */	
 
-define('CLOUDFLARE_VERSION', '1.3.8');
+define('CLOUDFLARE_VERSION', '1.3.9');
 require_once("ip_in_range.php");
 
 // Make sure we don't expose any info if called directly
@@ -244,14 +244,14 @@ CloudFlare is a service that makes websites load faster and protects sites from 
     <p><input id="email" name="email" type="text" size="50" maxlength="48" value="<?php echo get_option('cloudflare_api_email'); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;" /> (<?php _e('<a href="https://www.cloudflare.com/my-account.html">Get this?</a>'); ?>)
     <h3><label for="dev_mode"><?php _e('Development Mode'); ?></label> <span style="font-size:9pt;">(<a href="https://support.cloudflare.com/entries/22280726-what-does-cloudflare-development-mode-mean" " target="_blank">What is this?</a>)</span></h3>
 
-    <? if ($curl_installed) { ?>
+    <?php if ($curl_installed) { ?>
     <div style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;">
     <input type="radio" name="dev_mode" value="0" <? if ($dev_mode == "off") echo "checked"; ?>> Off
     <input type="radio" name="dev_mode" value="1" <? if ($dev_mode == "on") echo "checked"; ?>> On
     </div>
-    <? } else { ?>
+    <?php } else { ?>
     You cannot toggle development mode because cURL is not installed for your domain.  Please contact a server administrator for assistance with installing cURL.
-    <? } ?>
+    <?php } ?>
     
     </p>
     <p class="submit"><input type="submit" name="submit" value="<?php _e('Update options &raquo;'); ?>" /></p>
