@@ -40,9 +40,9 @@ You will also want to sign up your blog with CloudFlare.com
 
 = 1.3.12 =
 
-Removed use of php short-code in a couple of places
-Added some cURL / json_decode error handling to output to the screen any failures
-Reformatted error / notice display slightly
+* Removed use of php short-code in a couple of places
+* Added some cURL / json_decode error handling to output to the screen any failures
+* Reformatted error / notice display slightly
 
 = 1.3.11 =
 
