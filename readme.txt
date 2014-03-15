@@ -38,6 +38,11 @@ You will also want to sign up your blog with CloudFlare.com
 
 == Changelog ==
 
+= 1.3.13 =
+
+* Clarified error messaging in the plugin further
+* Added cURL error detection to explain issues with server installed cert bundles
+
 = 1.3.12 =
 
 * Removed use of php short-code in a couple of places
