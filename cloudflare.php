@@ -3,7 +3,7 @@
 Plugin Name: CloudFlare
 Plugin URI: http://www.cloudflare.com/wiki/CloudFlareWordPressPlugin
 Description: CloudFlare integrates your blog with the CloudFlare platform.
-Version: 1.3.15
+Version: 1.3.16
 Author: Ian Pye, Jerome Chen, James Greene, Simon Moore, David Fritsch (CloudFlare Team)
 License: GPLv2
 */
@@ -26,7 +26,7 @@ Plugin adapted from the Akismet WP plugin.
 
 */	
 
-define('CLOUDFLARE_VERSION', '1.3.15');
+define('CLOUDFLARE_VERSION', '1.3.16');
 define('CLOUDFLARE_API_URL', 'https://www.cloudflare.com/api_json.html'); 
 define('CLOUDFLARE_SPAM_URL', 'https://www.cloudflare.com/ajax/external-event.html');
 
@@ -565,7 +565,7 @@ function cloudflare_curl($url, $fields = array(), $json = true) {
 
 function cloudflare_buffer_wrapup($buffer) {
     // replace href or src attributes within script, link, base, and img tags with just "//" for protocol
-    $re = "/(<(script|link|base|img|form)([^>]*)(href|src|action)=[\"'])https?:\\/\\//i"; 
+    $re = "/(<(script|link|base|img|form)([^>]*)(?<!rel=['\"]canonical['\"] )(href|src|action)=[\"'])https?:\\/\\//i"; 
     $subst = "$1//"; 
     $return = preg_replace($re, $subst, $buffer);
     
