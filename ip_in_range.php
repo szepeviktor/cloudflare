@@ -1,11 +1,12 @@
 <?php
-
-/*
- * ip_in_range.php - Function to determine if an IP is located in a
- *                   specific range as specified via several alternative
- *                   formats.
+/**
+ * ip_in_range.php
  *
- * Network ranges can be specified as:
+ * Function to determine if an IP is located in a
+ * specific range as specified via several alternative formats.
+ *
+ * Network ranges can be specified as
+ *
  * 1. Wildcard format:     1.2.3.*
  * 2. CIDR format:         1.2.3/24  OR  1.2.3.4/255.255.255.0
  * 3. Start-End IP format: 1.2.3.0-1.2.3.255
@@ -27,11 +28,11 @@
  * Please do not remove this header, or source attibution from this file.
  */
 
-/*
-* Modified by James Greene <james@cloudflare.com> to include IPV6 support
-* (original version only supported IPV4).
-* 21 May 2012 
-*/
+/**
+ * Modified by James Greene <james@cloudflare.com> to include IPV6 support
+ * (original version only supported IPV4).
+ * 21 May 2012
+ */
 
 
 // decbin32
@@ -70,14 +71,14 @@ function ipv4_in_range($ip, $range) {
             $range = sprintf("%u.%u.%u.%u", empty($a)?'0':$a, empty($b)?'0':$b,empty($c)?'0':$c,empty($d)?'0':$d);
             $range_dec = ip2long($range);
             $ip_dec = ip2long($ip);
-            
+
             # Strategy 1 - Create the netmask with 'netmask' 1s and then fill it to 32 with 0s
             #$netmask_dec = bindec(str_pad('', $netmask, '1') . str_pad('', 32-$netmask, '0'));
-            
+
             # Strategy 2 - Use math to create it
             $wildcard_dec = pow(2, (32-$netmask)) - 1;
             $netmask_dec = ~ $wildcard_dec;
-            
+
             return (($ip_dec & $netmask_dec) == ($range_dec & $netmask_dec));
         }
     } else {
@@ -88,7 +89,7 @@ function ipv4_in_range($ip, $range) {
             $upper = str_replace('*', '255', $range);
             $range = "$lower-$upper";
         }
-        
+
         if (strpos($range, '-')!==false) { // A-B format
             list($lower, $upper) = explode('-', $range, 2);
             $lower_dec = (float)sprintf("%u",ip2long($lower));
@@ -97,26 +98,25 @@ function ipv4_in_range($ip, $range) {
             return ( ($ip_dec>=$lower_dec) && ($ip_dec<=$upper_dec) );
         }
         return false;
-    } 
+    }
 }
 
 function ip2long6($ip) {
-    if (substr_count($ip, '::')) { 
-        $ip = str_replace('::', str_repeat(':0000', 8 - substr_count($ip, ':')) . ':', $ip); 
-    } 
-        
+    if (substr_count($ip, '::')) {
+        $ip = str_replace('::', str_repeat(':0000', 8 - substr_count($ip, ':')) . ':', $ip);
+    }
+
     $ip = explode(':', $ip);
-    $r_ip = ''; 
+    $r_ip = '';
     foreach ($ip as $v) {
-        $r_ip .= str_pad(base_convert($v, 16, 2), 16, 0, STR_PAD_LEFT); 
-    } 
-        
-    return base_convert($r_ip, 2, 10); 
-} 
+        $r_ip .= str_pad(base_convert($v, 16, 2), 16, 0, STR_PAD_LEFT);
+    }
+
+    return base_convert($r_ip, 2, 10);
+}
 
 // Get the ipv6 full format and return it as a decimal value.
-function get_ipv6_full($ip)
-{
+function get_ipv6_full($ip) {
     $pieces = explode ("/", $ip, 2);
     $left_piece = $pieces[0];
     $right_piece = null;
@@ -139,7 +139,7 @@ function get_ipv6_full($ip)
     $size = count($main_ip_pieces);
     if (trim($last_ip_piece) != "") {
         $last_piece = str_pad($last_ip_piece, 4, "0", STR_PAD_LEFT);
-    
+
         // Build the full form of the IPV6 address considering the last IP block set
         for ($i = $size; $i < 7; $i++) {
             $main_ip_pieces[$i] = "0000";
@@ -150,9 +150,9 @@ function get_ipv6_full($ip)
         // Build the full form of the IPV6 address
         for ($i = $size; $i < 8; $i++) {
             $main_ip_pieces[$i] = "0000";
-        }        
+        }
     }
-    
+
     // Rebuild the final long form IPV6 address
     $final_ip = implode(":", $main_ip_pieces);
 
@@ -160,12 +160,14 @@ function get_ipv6_full($ip)
 }
 
 
-// Determine whether the IPV6 address is within range.
-// $ip is the IPV6 address in decimal format to check if its within the IP range created by the cloudflare IPV6 address, $range_ip. 
-// $ip and $range_ip are converted to full IPV6 format.
-// Returns true if the IPV6 address, $ip,  is within the range from $range_ip.  False otherwise.
-function ipv6_in_range($ip, $range_ip)
-{
+/**
+ * Determine whether the IPV6 address is within range.
+ *
+ * $ip is the IPV6 address in decimal format to check if its within the IP range created by the cloudflare IPV6 address, $range_ip.
+ * $ip and $range_ip are converted to full IPV6 format.
+ * Returns true if the IPV6 address, $ip,  is within the range from $range_ip.  False otherwise.
+ */
+function ipv6_in_range($ip, $range_ip) {
     $pieces = explode ("/", $range_ip, 2);
     $left_piece = $pieces[0];
     $right_piece = $pieces[1];
@@ -190,20 +192,19 @@ function ipv6_in_range($ip, $range_ip)
     $size = count($main_ip_pieces);
     if (trim($last_ip_piece) != "") {
         $last_piece = str_pad($last_ip_piece, 4, "0", STR_PAD_LEFT);
-    
+
         // Build the full form of the IPV6 address considering the last IP block set
         for ($i = $size; $i < 7; $i++) {
             $first[$i] = "0000";
             $last[$i] = "ffff";
         }
         $main_ip_pieces[7] = $last_piece;
-    }
-    else {
+    } else {
         // Build the full form of the IPV6 address
         for ($i = $size; $i < 8; $i++) {
             $first[$i] = "0000";
             $last[$i] = "ffff";
-        }        
+        }
     }
 
     // Rebuild the final long form IPV6 address
@@ -213,4 +214,3 @@ function ipv6_in_range($ip, $range_ip)
 
     return $in_range;
 }
-?>
